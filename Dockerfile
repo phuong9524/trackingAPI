@@ -1,15 +1,11 @@
-FROM ubuntu:latest AS build
-RUN apt-get update
-RUN apt-get install openjdk-17-jdk -y
+FROM maven:3.8.4 AS build
 WORKDIR /app
 COPY . .
-RUN ./gradlew bootJar --no-daemon
+RUN ./mvnw clean package -DskipTests
 
-# Use a lightweight base image for the runtime
+# Runtime Stage
 FROM openjdk:17-jdk-slim
 WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-COPY --from=build /app/build/libs/demo-1.jar app.jar
-LABEL authors="tyty2"
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
