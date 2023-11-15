@@ -2,7 +2,7 @@ FROM maven:3.8.4 AS build
 WORKDIR /app
 COPY . .
 RUN chmod +x mvnw
-RUN ./mvnw install -DskipTests
+#RUN ./mvnw install -DskipTests
 
 # Runtime Stage
 FROM openjdk:17-jdk-slim
