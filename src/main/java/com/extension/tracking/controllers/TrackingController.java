@@ -1,8 +1,7 @@
 package com.extension.tracking.controllers;
 
-import com.extension.tracking.model.entities.Tracking;
-import com.extension.tracking.services.tracking.TrackingService;
-import org.springframework.http.HttpStatus;
+import com.extension.tracking.entities.Tracking;
+import com.extension.tracking.repositories.TrackingRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,27 +10,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tracking")
 public class TrackingController {
-    private final TrackingService trackingService;
+    private final TrackingRepository trackingRepository;
 
-    public TrackingController(TrackingService trackingService) {
-        this.trackingService = trackingService;
+    public TrackingController(TrackingRepository trackingRepository) {
+        this.trackingRepository = trackingRepository;
     }
 
     @PostMapping
-    @CrossOrigin(origins = "chrome-extension://cnolbdgnphcdiaidhoniadghipgbkagf")
-    public ResponseEntity<Tracking> createTracking(@RequestBody Tracking tracking) {
-        return ResponseEntity.status(HttpStatus.OK).body(trackingService.createTracking(tracking));
+    public Tracking track(@RequestBody Tracking tracking) {
+        return trackingRepository.save(tracking);
     }
 
     @GetMapping
-    @CrossOrigin(origins = "chrome-extension://cnolbdgnphcdiaidhoniadghipgbkagf")
-    public ResponseEntity<List<Tracking>> getTracking(@RequestParam String userChannel) {
-        return ResponseEntity.status(HttpStatus.OK).body(trackingService.getAllTracking(userChannel));
+    public List<Tracking> getData() {
+        return trackingRepository.findAll();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteTracking(@RequestParam String id) {
-        trackingService.deleteTracking(id);
+    public ResponseEntity<Void> delete(@RequestParam String id) {
+        trackingRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
